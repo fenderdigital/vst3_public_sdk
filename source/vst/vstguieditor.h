@@ -113,7 +113,6 @@ protected:
 	tresult PLUGIN_API onWheel (float distance) SMTG_OVERRIDE;
 	tresult PLUGIN_API setFrame (IPlugFrame* frame) SMTG_OVERRIDE;
 
-private:
 	VSTGUI::CVSTGUITimer* timer;
 };
 

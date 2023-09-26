@@ -47,6 +47,8 @@
 
 #include "vstgui/uidescription/delegationcontroller.h"
 
+#include "vstgui/plugin-bindings/viewrendering/vst3viewrendereditor.h"
+
 #include <cmath>
 #include <cstdio>
 
@@ -140,7 +142,8 @@ tresult PLUGIN_API AGainController::initialize (FUnknown* context)
 	    unitInfo.parentUnitId = kNoParentUnitId;	// always for Root Unit
 	    Steinberg::UString (unitInfo.name, USTRINGSIZE (unitInfo.name)).assign (USTRING ("Root"));
 	    unitInfo.programListId = kNoProgramListId;
-	    
+	    
+
 	    unit = new Unit (unitInfo);
 	    addUnitInfo (unit);*/
 
@@ -223,7 +226,7 @@ IPlugView* PLUGIN_API AGainController::createView (const char* _name)
 	ConstString name (_name);
 	if (name == ViewType::kEditor)
 	{
-		auto* view = new VST3Editor (this, "view", "again.uidesc");
+		auto* view = new Presonus::VST3ViewRenderEditor (this, "view", "again.uidesc");
 		return view;
 	}
 	return nullptr;
