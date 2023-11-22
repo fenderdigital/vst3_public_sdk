@@ -38,6 +38,10 @@
 #include "public.sdk/source/main/moduleinit.h"
 #include "pluginterfaces/base/keycodes.h"
 
+#if SMTG_OS_LINUX
+#include "presonus/ipslwaylandframe.h"
+#endif
+
 #if SMTG_OS_WINDOWS && SMTG_MODULE_IS_BUNDLE
 #include "vstgui_win32_bundle_support.h"
 #endif
@@ -147,7 +151,15 @@ tresult PLUGIN_API VSTGUIEditor::isPlatformTypeSupported (FIDString type)
 #endif
 #elif SMTG_OS_LINUX
 	if (strcmp (type, kPlatformTypeX11EmbedWindowID) == 0)
+	{
+		::printf ("%s: %s\n", __FUNCTION__, "platform type is X11 embed window ID");
 		return kResultTrue;
+	}
+	if (strcmp (type, Presonus::kPlatformTypeWaylandSurfaceID) == 0)
+	{
+		::printf ("%s: %s\n", __FUNCTION__, "platform type is wayland surface");
+		return kResultTrue;
+	}
 #endif
 
 	return kInvalidArgument;
@@ -163,11 +175,17 @@ tresult PLUGIN_API VSTGUIEditor::attached (void* parent, FIDString type)
 #if MAC_COCOA && MAC_CARBON && !(VSTGUI_VERSION_MAJOR >= 4 && VSTGUI_VERSION_MINOR >= 1)
 	CFrame::setCocoaMode (strcmp (type, kPlatformTypeNSView) == 0);
 #endif
-#endif
+#endif // SMTG_OS_MACOS
 
 #if VSTGUI_VERSION_MAJOR >= 4 && VSTGUI_VERSION_MINOR >= 1
 	PlatformType platformType = PlatformType::kDefaultNative;
-#if SMTG_OS_MACOS
+#if SMTG_OS_LINUX
+	if (strcmp (type, Presonus::kPlatformTypeWaylandSurfaceID) == 0)
+	{
+		::printf ("%s: %s\n", __FUNCTION__, "platform type is wayland surface");
+		platformType = PlatformType::kWaylandSurface;
+	}
+#elif SMTG_OS_MACOS
 #if TARGET_OS_IPHONE
 	if (strcmp (type, kPlatformTypeUIView) == 0)
 		platformType = PlatformType::kUIView;
